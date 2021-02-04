@@ -1,16 +1,5 @@
-import os
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from app import db
 from flask_marshmallow import Marshmallow
-
-app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
-# app.config(['SQLALCHEMY_TRACK_MODIFICATIONS']) = False 
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-ma = Marshmallow(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -28,7 +17,7 @@ class User(db.Model):
     def __repr__(self):
         return '<id {}>'.format(self.id)
 
-class UserSchema(ma.SQLAlchemyAutoSchema):
+class UserSchema(ma.schema):
     class Meta:
         fields = (
             'id',
@@ -58,20 +47,6 @@ class Workout(db.Model):
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
-
-class WorkoutSchema(ma.SQLAlchemyAutoSchema):
-    class Meta:
-        fields = (
-            'id',
-            'level',
-            'pull',
-            'push',
-            'hip',
-            'core'
-        )
-
-workout_schema = WorkoutSchema()
-workouts_schema = WorkoutSchema(many=True)
 
 class Sesh(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -108,25 +83,4 @@ class Antagonist(db.Model):
     def __repr__(self):
         return '<id {}>'.format(self.id)
 
-
-# b_workout = Workout(pull = 'pull-ups x 3-5', push = 'push-ups x 10', hip = 'goblet squat (10-15 lbs) x 5-10', core = 'V-ups x 15')
-
-# login_manager = LoginManager()
-# login_manager.init_app(app)
-
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    return "Climb-it Change"
-
-@app.route('/api/workouts', methods=['GET'])
-def workouts():
-    all_workouts = Workout.query.all()
-    result = workouts_schema.dump(all_workouts)
-    return jsonify(result)
-
-# @app.route('/api/workouts', methods=['GET'])
-# def workouts():
-
-if __name__ == '__main__':
-    app.run(debug=True)
+db.create_all()
