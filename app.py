@@ -1,8 +1,22 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
+
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
+from oauthlib.oauth2 import WebApplicationClient
+import requests
+
+# Internal imports
+from db import init_db_command
+
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
@@ -109,7 +123,7 @@ class Antagonist(db.Model):
         return '<id {}>'.format(self.id)
 
 
-# b_workout = Workout(pull = 'pull-ups x 3-5', push = 'push-ups x 10', hip = 'goblet squat (10-15 lbs) x 5-10', core = 'V-ups x 15')
+
 
 # login_manager = LoginManager()
 # login_manager.init_app(app)
