@@ -14,6 +14,7 @@ from flask_login import (
     login_required,
     login_user,
     logout_user,
+    UserMixin
 )
 from oauthlib.oauth2 import WebApplicationClient
 import requests
@@ -29,9 +30,11 @@ app.config.from_object(os.environ['APP_SETTINGS'])
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 
-# GOOGLE_DISCOVERY_URL = (
-#     "https://accounts.google.com/.well-known/openid-configuration"
-# )
+GOOGLE_DISCOVERY_URL = ("https://accounts.google.com/.well-known/openid-configuration")
+
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+ma = Marshmallow(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -47,24 +50,23 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 def load_user(user_id):
     return User.get(user_id)
 
-#routes for oauth:
+def get_google_provider():
+    return requests.get(GOOGLE_DISCOVERY_URL).json()
 
-    # Homepage: /
-    # Login: /login
-    # Login Callback: /login/callback
-    # Logout: /logout
+google_provider = get_google_provider()
+token_endpoint = google_provider["token_endpoint"]
 
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-ma = Marshmallow(app)
 
-class User(db.Model):
+class User(UserMixin, db.Model):
+    # __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(50), index = True)
     email = db.Column(db.String(100), index = True)
     level = db.Column(db.String(20), index = True)
     member_since = db.Column(db.String(10), index = True)
+    picture = db.Column(db.String(120), index = True)
+    plan = db.relationship('Plan', backref='plan', lazy='dynamic', cascade = "all, delete, delete-orphan")
 
     def __init__(self, name, email, level, member_since):
         self.name = name
@@ -96,6 +98,7 @@ class Workout(db.Model):
     push = db.Column(db.String(50), index = True)
     hip = db.Column(db.String(50), index = True)
     core = db.Column(db.String(50), index = True)
+    
 
     def __init__(self, level, pull, push, hip, core):
         self.level = level
@@ -183,8 +186,35 @@ class AntagonistSchema(ma.SQLAlchemyAutoSchema):
 ant_schema = AntagonistSchema()
 ants_schema = AntagonistSchema(many=True)
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
+class Plan(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sesh_id = db.Column(db.Integer, db.ForeignKey('sesh.id'))
+    ant_id = db.Column(db.Integer, db.ForeignKey('antagonist.id'))
+
+    def __init__(self, user_id, sesh_id, ant_id):
+        self.user_id= user_id
+        self.sesh_id = sesh_id
+        self.ant_id = ant_id
+
+    def __repr__(self):
+        return '<id {}>'.format(self.id)
+
+class PlanSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        fields = (
+            'id',
+            'user_id',
+            'sesh_id',
+            'ant_id'
+        )
+
+plan_schema = PlanSchema()
+plans_schema = PlanSchema(many=True)
+    
+
+@app.route('/')
+def homepage():
     return "Climb-it Change"
 
 @app.route('/api/workouts', methods=['GET'])
@@ -198,6 +228,62 @@ def sessions():
     all_sessions = Sesh.query.all()
     result = seshes_schema.dump(all_sessions)
     return jsonify(result)
+
+@app.route('/login', methods=['POST'])
+def login():
+    google_provider = get_google_provider()
+    auth_endpoint = google_provider["authorization_endpoint"]
+
+    request_uri = client.prepare_request_uri(
+        authorization_endpoint,
+        redirect_uri=request.base_url + "/callback",
+        scope=["openid", "email", "profile"]
+    )
+
+    return redirect(request_uri)
+
+@app.route('/login/callback', methods=['POST'])
+def login_callback():
+    code = request.args.get("code")
+
+    token, headers, body = client.prepare_token_request(
+    token_endpoint,
+    authorization_response=request.url,
+    redirect_url=request.base_url,
+    code=code
+    )
+    token_response = requests.post(
+        token_url,
+        headers=headers,
+        data=body,
+        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET)
+    )
+
+    client.parse_request_body_response(json.dumps(token_response.json()))
+
+    userinfo_endpoint = google_provider["userinfo_endpoint"]
+    uri, headers, body = client.add_token(userinfo_endpoint)
+    userinfo_response = request.get(uri, headers=headers, data=body)
+
+    if userinfo_response.json().get("email_verified"):
+        unique_id = userinfo_response.json()["sub"]
+        user_email = userinfo_response.json()["email"]
+        user_picture = userinfo_response.json()["picture"]
+        user_name = userinfo_response.json()["given_name"]
+    else:
+        print("User email not available or not verified by Google")
+
+    user = User(id=unique_id, name=user_name, email=user_email, picture=user_picture)
+
+    if not User.get(unique_id):
+        User.create(unique_id, user_name, user_email, user_picture)
+        login_user(user)
+        redirect(url_for("/"))
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    logout_user()
+    return redirect(url_for("/"))
 
 if __name__ == '__main__':
     app.run(debug=True)
