@@ -1,5 +1,8 @@
 
-from app import db, Sesh, Workout, Antagonist, User
+from app import db
+from sesh import Sesh
+from workout import Workout
+from antagonaist import Antagonist
 import os
 
 db.create_all()
