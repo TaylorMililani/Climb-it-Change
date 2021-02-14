@@ -1,5 +1,6 @@
 alembic==1.5.4
 cachelib==0.1.1
+cachetools==4.2.1
 certifi==2020.12.5
 cffi==1.14.4
 chardet==3.0.4
@@ -20,6 +21,7 @@ Flask-Session==0.3.2
 Flask-SQLAlchemy==2.4.4
 future==0.18.2
 gevent==21.1.2
+google-auth==1.26.1
 google-jwt==0.1.0
 greenlet==1.0.0
 idna==2.8
@@ -32,6 +34,7 @@ marshmallow-sqlalchemy==0.24.1
 oauthlib==3.0.1
 psycopg2-binary==2.8.6
 pyasn1==0.4.8
+pyasn1-modules==0.2.8
 pycparser==2.20
 pyOpenSSL==19.0.0
 python-dateutil==2.8.1

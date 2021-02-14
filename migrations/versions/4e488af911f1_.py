@@ -24,6 +24,7 @@ def upgrade():
     sa.Column('sesh_id', sa.Integer(), nullable=True),
     sa.Column('ant_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['ant_id'], ['antagonist.id'], ),
+    sa.ForeignKeyConstraint(['workout_id'], ['workout.id'], ),
     sa.ForeignKeyConstraint(['sesh_id'], ['sesh.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
