@@ -1,7 +1,7 @@
 import os
 from flask import Flask, Blueprint, Response, session, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
+# from sqlalchemy import create_engine
 
 from flask_migrate import Migrate
 from flask_marshmallow import Marshmallow
@@ -29,7 +29,7 @@ migrate = Migrate(app, db)
 ma = Marshmallow(app)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-engine = create_engine("postgresql://localhost/climb-it-change7")
+# engine = create_engine("postgresql://localhost/climb-it-change7")
 
 
 try: 
