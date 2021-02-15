@@ -16,7 +16,7 @@ from google.oauth2 import id_token
 app = Flask(__name__)
 # DATABASE_URL="postgresql://localhost/Climb-it-Change"
 # app.config(['SQLALCHEMY_TRACK_MODIFICATIONS']) = False 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://localhost/climb-it-change7"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://viufcoiovftbmz:0cb59911680aab744f8b6597f7b8b9559696946dad4b9ec4d14cf18e336215e1@ec2-3-211-245-154.compute-1.amazonaws.com:5432/dcfqr78dkeju71'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
