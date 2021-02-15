@@ -168,36 +168,6 @@ class AntagonistSchema(ma.SQLAlchemyAutoSchema):
 ant_schema = AntagonistSchema()
 ants_schema = AntagonistSchema(many=True)
 
-# class Plan(db.Model):
-#     __tablename__ = 'plan'
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-#     workout_id = db.Column(db.Integer, db.ForeignKey('workout.id'))
-#     sesh_id = db.Column(db.Integer, db.ForeignKey('sesh.id'))
-#     ant_id = db.Column(db.Integer, db.ForeignKey('antagonist.id'))
-
-#     def __init__(self, user_id, workout_id, sesh_id, ant_id):
-#         self.user_id= user_id
-#         self.workout_id = workout_id
-#         self.sesh_id = sesh_id
-#         self.ant_id = ant_id
-
-#     # def __iter__(self):
-#     #     pass
-
-# class PlanSchema(ma.SQLAlchemyAutoSchema):
-#     class Meta:
-#         fields = (
-#             'id',
-#             'user_id',
-#             'workout_id'
-#             'sesh_id',
-#             'ant_id'
-#         )
-
-# plan_schema = PlanSchema()
-# plans_schema = PlanSchema(many=True) 
-
 @app.route('/api/user', methods=['POST'])
 @cross_origin()
 def add_user():
@@ -241,7 +211,7 @@ def login():
         content = {"message": "invalid token"}
         return Response(content, "/")
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 @cross_origin()
 def homepage():
     return "Climb-it Change"
@@ -286,30 +256,19 @@ def new_user_form():
         workout = Workout.query.get(1)
         sesh = Sesh.query.get(1)
         ant = Sesh.query.get(1)
-        user.plan = {workout: {workout}, sesh: {sesh}, ant: {ant}}
+        user.plan = [workout.pull, workout.push, workout.hip, workout.core, sesh.warm_up, sesh.projecting, sesh.cool_down, ant.ant1, ant.ant2, ant.ant3, ant.ant4]
         db.session.commit()
     if user.level == 'Intermediate':
         workout = Workout.query.get(2)
-        print(workout.pull)
         sesh = Sesh.query.get(2)
         ant = Antagonist.query.get(2)
-        # with engine.connect() as conn:       
-        #     conn.execute(
-        #         user.insert(
-        #         plan = {workout: [workout.pull, workout.push, workout.hip, workout.core]}
-        #         )
-        #         # , sesh: {warm_up: '', projecting: '', cool_down: ''}, ant: {ant1: '', ant2: '', ant3: '', ant4: ''}}
-        #     )
         user.plan = [workout.pull, workout.push, workout.hip, workout.core, sesh.warm_up, sesh.projecting, sesh.cool_down, ant.ant1, ant.ant2, ant.ant3, ant.ant4]
-        # user.plan = {'workout': {'pull': workout.pull}}
-        # user.plan = {workout: {workout.pull, workout.push}, sesh: {sesh}, ant: {ant}}
-        # user.plan = plan
         db.session.commit()
     else:
         workout = Workout.query.get(3)
         sesh = Sesh.query.get(3)
         ant = Sesh.query.get(3)
-        user.plan = {workout: {workout}, sesh: {sesh}, ant: {ant}}
+        user.plan = [workout.pull, workout.push, workout.hip, workout.core, sesh.warm_up, sesh.projecting, sesh.cool_down, ant.ant1, ant.ant2, ant.ant3, ant.ant4]
         db.session.commit()
     print(user.plan)
     return "level saved"
