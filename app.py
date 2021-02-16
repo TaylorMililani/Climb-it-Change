@@ -336,7 +336,7 @@ def set_schedule():
     schedule = request.json['data']['schedule']
     user = User.query.filter_by(email=email).first()
     user.schedule = schedule
-    return jsonify(user.schedule)
+    return user.schedule
 
 
 
