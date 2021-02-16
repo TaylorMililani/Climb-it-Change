@@ -198,7 +198,7 @@ def add_user():
 
 requested = requests.Request()
 
-@app.route('login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 @cross_origin()
 def login():
     token = {'id_token': request.json['data']['id_token']}
@@ -222,10 +222,10 @@ def login():
         content = {"message": "invalid token"}
         return Response(content, "/")
 
-@app.route('/', methods=['GET'])
-@cross_origin()
-def homepage():
-    return "Climb-it Change"
+# @app.route('/', methods=['GET'])
+# @cross_origin()
+# def homepage():
+#     return "Climb-it Change"
 
 @app.route('/dashboard/<int:user_id>', methods=['GET'])
 @cross_origin()

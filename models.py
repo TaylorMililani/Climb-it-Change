@@ -15,7 +15,7 @@ class User(db.Model):
     level = db.Column(db.String(20), index = True)
     member_since = db.Column(db.String(10), index = True)
     plan = db.Column(db.PickleType, index = True)
-    workouts_count = db.Column(db.Integer, index = True)
+    workout_count = db.Column(db.Integer, index = True)
     sesh_count = db.Column(db.Integer, index = True)
     ant_count = db.Column(db.Integer, index = True)
     # picture = db.Column(db.String(120), index = True)
