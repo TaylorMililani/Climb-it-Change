@@ -306,6 +306,7 @@ def get_user(id):
     email = request.json['data']['email']
     user = User.query.filter_by(email=email).first()
     result = user_schema.dump(user)
+    return jsonify(result)
 
 # @app.route('/api/user/<id>', methods=['DELETE'])
 # @cross_origin()
