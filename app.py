@@ -338,7 +338,7 @@ def set_schedule():
     user = User.query.filter_by(email=email).first()
     user.schedule = schedule
     db.session.commit()
-    return user.schedule
+    return jsonify(user.schedule)
 
 
 
