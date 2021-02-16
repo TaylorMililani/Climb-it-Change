@@ -44,7 +44,8 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
             'plan',
             'workout_count',
             'sesh_count',
-            'ant_count'
+            'ant_count',
+            'schedule'
         )
 
 user_schema = UserSchema()
