@@ -198,7 +198,7 @@ def add_user():
 
 requested = requests.Request()
 
-@app.route('/login', methods=['POST'])
+@app.route('login', methods=['POST'])
 @cross_origin()
 def login():
     token = {'id_token': request.json['data']['id_token']}
