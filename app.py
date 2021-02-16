@@ -303,7 +303,7 @@ def users():
 
 @app.route('/api/user-data', methods=['GET'])
 @cross_origin()
-def get_user(id):
+def get_user():
     email = request.json['data']['email']
     user = User.query.filter_by(email=email).first()
     result = user_schema.dump(user)
