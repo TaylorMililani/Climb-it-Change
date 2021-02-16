@@ -14,12 +14,12 @@ class User(db.Model):
     email = db.Column(db.String(100), index = True)
     level = db.Column(db.String(20), index = True)
     member_since = db.Column(db.String(10), index = True)
+    plan = db.Column(db.PickleType, index = True)
     workouts_count = db.Column(db.Integer, index = True)
     sesh_count = db.Column(db.Integer, index = True)
     ant_count = db.Column(db.Integer, index = True)
     # picture = db.Column(db.String(120), index = True)
     # plan = db.relationship('Plan', backref='plan', lazy='dynamic', cascade = "all, delete, delete-orphan")
-    plan = db.Column(db.PickleType, index = True)
 
     def __init__(self, name, email, level, member_since, plan):
         self.name = name
@@ -27,11 +27,12 @@ class User(db.Model):
         self.level = level
         self.member_since = member_since
         self.plan = []
+        self.workout_count = workout_count
+        self.sesh_count = sesh_count
+        self.ant_count = ant_count
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
-
-
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -41,7 +42,10 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
             'email',
             'level',
             'member_since',
-            'plan_id'
+            'plan',
+            'workout_count',
+            'sesh_count',
+            'ant_count'
         )
 
 user_schema = UserSchema()

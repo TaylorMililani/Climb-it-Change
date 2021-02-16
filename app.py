@@ -47,13 +47,18 @@ class User(db.Model):
     # picture = db.Column(db.String(120), index = True)
     # plan = db.relationship('Plan', backref='plan', lazy='dynamic', cascade = "all, delete, delete-orphan")
     plan = db.Column(db.PickleType, index = True)
-
+    workout_count = db.Column(db.Integer, index = True)
+    sesh_count = db.Column(db.Integer, index = True)
+    ant_count = db.Column(db.Integer, index = True)
     def __init__(self, name, email, level, member_since, plan):
         self.name = name
         self.email = email
         self.level = level
         self.member_since = member_since
         self.plan = []
+        self.workout_count = workout_count
+        self.sesh_count = sesh_count
+        self.ant_count = ant_count
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -66,7 +71,10 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
             'email',
             'level',
             'member_since',
-            'plan_id'
+            'plan',
+            'workout_count',
+            'sesh_count',
+            'ant_count'
         )
 
 user_schema = UserSchema()
@@ -176,6 +184,9 @@ def add_user():
     level = ''
     member_since = datetime.today().strftime('%Y-%m-%d')
     plan = []
+    workout_count = 0
+    sesh_count = 0
+    ant_count = 0
     # picture = request.json['data']['imageUrl']
 
     new_user = User(name, email, level, member_since, plan)
