@@ -189,7 +189,7 @@ def add_user():
     ant_count = 0
     # picture = request.json['data']['imageUrl']
 
-    new_user = User(name, email, level, member_since, plan)
+    new_user = User(name, email, level, member_since, plan, workout_count, sesh_count, ant_count)
 
     db.session.add(new_user)
     db.session.commit()
@@ -323,11 +323,26 @@ def plan():
     result = user_schema.dump(user)
     return jsonify(user.plan)
 
-@app.route('/set-level/<int:id>', methods=['GET', 'POST', 'PATCH'])
-@cross_origin()
-def set_level(user_id):
-    user = User.query.get(user_id)
-    user_plan = Plan()
+# @app.route('/update-workout-count', methods=['GET', 'POST', 'PATCH'])
+# @cross_origin()
+# def update_count():
+#     print(request.json['data']['email'])
+#     count = request.json['data']['count']
+#     email = request.json['data']['email']
+#     user = User.query.filter_by(email=email).first()
+#     result = user_schema.dump(user)
+
+# @app.route('/update-sesh-count', methods=['GET', 'POST', 'PATCH'])
+# @cross_origin()
+# def update_count():
+#     print(request.json['data']['email'])
+#     count = request.json['data']['count']
+
+# @app.route('/update-ant-count', methods=['GET', 'POST', 'PATCH'])
+# @cross_origin()
+# def update_count():
+#     print(request.json['data']['email'])
+#     count = request.json['data']['count']
 
 if __name__ == '__main__':
     app.run(debug=True)
