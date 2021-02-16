@@ -342,26 +342,38 @@ def set_schedule():
 
 
 
-# @app.route('/update-workout-count', methods=['GET', 'POST', 'PATCH'])
-# @cross_origin()
-# def update_count():
-#     print(request.json['data']['email'])
-#     count = request.json['data']['count']
-#     email = request.json['data']['email']
-#     user = User.query.filter_by(email=email).first()
-#     result = user_schema.dump(user)
+@app.route('/workout-count', methods=['GET', 'POST', 'PATCH'])
+@cross_origin()
+def update_count():
+    print(request.json['data']['email'])
+    count = request.json['data']['count']
+    email = request.json['data']['email']
+    user = User.query.filter_by(email=email).first()
+    user.count = count
+    db.session.commit()
+    return jsonify(user.count)
 
-# @app.route('/update-sesh-count', methods=['GET', 'POST', 'PATCH'])
-# @cross_origin()
-# def update_count():
-#     print(request.json['data']['email'])
-#     count = request.json['data']['count']
+@app.route('/sesh-count', methods=['GET', 'POST', 'PATCH'])
+@cross_origin()
+def update_count():
+    print(request.json['data']['email'])
+    count = request.json['data']['count']
+    email = request.json['data']['email']
+    user = User.query.filter_by(email=email).first()
+    user.count = count
+    db.session.commit()
+    return jsonify(user.count)
 
-# @app.route('/update-ant-count', methods=['GET', 'POST', 'PATCH'])
-# @cross_origin()
-# def update_count():
-#     print(request.json['data']['email'])
-#     count = request.json['data']['count']
+@app.route('/ant-count', methods=['GET', 'POST', 'PATCH'])
+@cross_origin()
+def update_count():
+    print(request.json['data']['email'])
+    count = request.json['data']['count']
+    email = request.json['data']['email']
+    user = User.query.filter_by(email=email).first()
+    user.count = count
+    db.session.commit()
+    return jsonify(user.count)
 
 if __name__ == '__main__':
     app.run(debug=True)
