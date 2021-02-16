@@ -217,7 +217,7 @@ def login():
             return("/", {"message": "gmail could not be saved"})
         if User.query.filter_by(email = email).first() is not None:
             print({"route": "users", "data": request.json['data']})
-            return ({"route": "users", "data": request.json['data']["name"]})
+            return ({"route": "users", "data": {email: user.email, }})
         else:
             add_user()
             return({"route": "users", "data": request.json['data']["name"]})
@@ -337,6 +337,7 @@ def set_schedule():
     schedule = request.json['data']['schedule']
     user = User.query.filter_by(email=email).first()
     user.schedule = schedule
+    db.session.commit()
     return user.schedule
 
 
