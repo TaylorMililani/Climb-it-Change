@@ -301,7 +301,7 @@ def users():
     result = users_schema.dump(all_users)
     return jsonify(result)
 
-@app.route('/api/user-data', methods=['GET'])
+@app.route('/api/user-data', methods=['GET', 'POST'])
 @cross_origin()
 def get_user():
     email = request.json['data']['email']
@@ -336,7 +336,7 @@ def set_schedule():
     schedule = request.json['data']['schedule']
     user = User.query.filter_by(email=email).first()
     user.schedule = schedule
-    return jsonify(user.schdule)
+    return jsonify(user.schedule)
 
 
 
