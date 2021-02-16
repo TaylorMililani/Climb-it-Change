@@ -50,7 +50,7 @@ class User(db.Model):
     workout_count = db.Column(db.Integer, index = True)
     sesh_count = db.Column(db.Integer, index = True)
     ant_count = db.Column(db.Integer, index = True)
-    def __init__(self, name, email, level, member_since, plan):
+    def __init__(self, name, email, level, member_since, plan, workout_count, sesh_count, ant_count):
         self.name = name
         self.email = email
         self.level = level
