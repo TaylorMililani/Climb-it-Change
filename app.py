@@ -50,7 +50,8 @@ class User(db.Model):
     workout_count = db.Column(db.Integer, index = True)
     sesh_count = db.Column(db.Integer, index = True)
     ant_count = db.Column(db.Integer, index = True)
-    def __init__(self, name, email, level, member_since, plan, workout_count, sesh_count, ant_count):
+    schedule = db.Column(db.PickleType, index = True)
+    def __init__(self, name, email, level, member_since, plan, workout_count, sesh_count, ant_count, schedule):
         self.name = name
         self.email = email
         self.level = level
@@ -59,6 +60,7 @@ class User(db.Model):
         self.workout_count = workout_count
         self.sesh_count = sesh_count
         self.ant_count = ant_count
+        self.schedule = schedule
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -187,9 +189,10 @@ def add_user():
     workout_count = 0
     sesh_count = 0
     ant_count = 0
+    schedule = []
     # picture = request.json['data']['imageUrl']
 
-    new_user = User(name, email, level, member_since, plan, workout_count, sesh_count, ant_count)
+    new_user = User(name, email, level, member_since, plan, workout_count, sesh_count, ant_count, schedule)
 
     db.session.add(new_user)
     db.session.commit()
@@ -297,11 +300,12 @@ def users():
     result = users_schema.dump(all_users)
     return jsonify(result)
 
-@app.route('/api/user/<int:id>', methods=['GET'])
+@app.route('/api/user-data', methods=['GET'])
 @cross_origin()
 def get_user(id):
-    user = User.query.get(id)
-    return user_schema.jsonify(user)
+    email = request.json['data']['email']
+    user = User.query.filter_by(email=email).first()
+    result = user_schema.dump(user)
 
 # @app.route('/api/user/<id>', methods=['DELETE'])
 # @cross_origin()
@@ -322,6 +326,17 @@ def plan():
     user = User.query.filter_by(email=email).first()
     result = user_schema.dump(user)
     return jsonify(user.plan)
+
+@app.route('/set-schedule', methods=['GET', 'POST', 'PATCH'])
+@cross_origin()
+def set_schedule():
+    email = request.json['data']['email']
+    schedule = request.json['data']['schedule']
+    user = User.query.filter_by(email=email).first()
+    user.schedule = schedule
+    return jsonify(user.schdule)
+
+
 
 # @app.route('/update-workout-count', methods=['GET', 'POST', 'PATCH'])
 # @cross_origin()

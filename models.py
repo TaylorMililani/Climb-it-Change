@@ -18,10 +18,8 @@ class User(db.Model):
     workout_count = db.Column(db.Integer, index = True)
     sesh_count = db.Column(db.Integer, index = True)
     ant_count = db.Column(db.Integer, index = True)
-    # picture = db.Column(db.String(120), index = True)
-    # plan = db.relationship('Plan', backref='plan', lazy='dynamic', cascade = "all, delete, delete-orphan")
-
-    def __init__(self, name, email, level, member_since, plan):
+    schedule = db.Column(db.PickleType, index = True)
+    def __init__(self, name, email, level, member_since, plan, workout_count, sesh_count, ant_count, schedule):
         self.name = name
         self.email = email
         self.level = level
@@ -30,6 +28,7 @@ class User(db.Model):
         self.workout_count = workout_count
         self.sesh_count = sesh_count
         self.ant_count = ant_count
+        self.schedule = schedule
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
