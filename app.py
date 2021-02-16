@@ -217,7 +217,7 @@ def login():
             return("/", {"message": "gmail could not be saved"})
         if User.query.filter_by(email = email).first() is not None:
             print({"route": "users", "data": request.json['data']})
-            return ({"route": "users", "data": {email: user.email, }})
+            return ({"route": "users", "data": request.json['data']['name']})
         else:
             add_user()
             return({"route": "users", "data": request.json['data']["name"]})
